@@ -47,19 +47,19 @@ gulp.task("hope_css", function () {
     .pipe($.sourcemaps.write("."))
     .pipe(gulp.dest("public/css"));
 });
- 
+
 
 
 function make_bundle(watch) {
     // add custom browserify options here
     var customOpts = {
       entries: "./ui/js/index.js",
-      debug: true 
+      debug: true
     };
     var opts = _.assign({}, watchify.args, customOpts);
     var _bundle = browserify(opts).transform(babel.configure({
       optional: ["es7.classProperties"]
-    })); 
+    }));
 
     if (watch) {
         _bundle = watchify(_bundle);
@@ -70,8 +70,8 @@ function make_bundle(watch) {
       var source = require("vinyl-source-stream");
       var buffer = require("vinyl-buffer");
       return _bundle.bundle()
-          .on("error", function (err) { 
-            console.log("\nError : " + err.message + "\n"); 
+          .on("error", function (err) {
+            console.log("\nError : " + err.message + "\n");
           })
           .pipe($.plumber())
           .pipe(source("hope.js"))
@@ -106,11 +106,12 @@ gulp.task("wire_html", function() {
 });
 
 
-// NOTE that this would result in vendor.js / vendor.css 
+// NOTE that this would result in vendor.js / vendor.css
 gulp.task("hope_html", ["wire_html"], function () {
     var jsFilter = $.filter("**/*.js");
     var cssFilter = $.filter("**/*.css");
-    var assets = $.useref.assets({searchPath: [".tmp", "ui"]});
+    // var assets = $.useref.assets({searchPath: [".tmp", "ui"]});
+    var assets = $.useref({searchPath: [".tmp", "ui"]});
 
     return gulp.src("ui/*.html")
         .pipe($.plumber())
@@ -121,7 +122,7 @@ gulp.task("hope_html", ["wire_html"], function () {
         .pipe(cssFilter)
         .pipe($.csso())
         .pipe(cssFilter.restore())
-        .pipe(assets.restore())
+        // .pipe(assets.restore())
         .pipe($.useref())
         .pipe($.plumber.stop())
         .pipe(gulp.dest("public"));
@@ -142,7 +143,7 @@ gulp.task("fonts", function () {
 
 
 gulp.task("clean", function () {
-    return gulp.src(["public/*", ".tmp"], 
+    return gulp.src(["public/*", ".tmp"],
         { read: false }).pipe($.clean());
 });
 
