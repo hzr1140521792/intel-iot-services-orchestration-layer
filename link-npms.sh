@@ -1,6 +1,7 @@
 #!/bin/sh
 
-
+# clean local npm caches to ensure I download caches from remote
+npm cache clear
 
 cd message
 echo "----- message"
